@@ -65,7 +65,6 @@ it('should return table', () => {
     |class="html_attrs_in_td_tag" align="right"
     * Embedding markdown content.
     * Embedding markdown content.
-    |-
     |}
     ## h2
     {|
@@ -81,7 +80,6 @@ it('should return table', () => {
     * Embedding tag li 1
     * Embedding tag li 2
     * Embedding tag li 3
-    |-
     |}
     `);
 
@@ -110,7 +108,6 @@ it('custom attribute separate', () => {
     |-
     |
     Embedding tag p
-    |-
     |}
     `);
   expect(beautify.html(result)).toBe(beautify.html(expected));
@@ -118,19 +115,19 @@ it('custom attribute separate', () => {
 
 it('custom allowed attribute', () => {
   const expected: string = outdent`
-      <table>
-          <tbody>
-              <tr>
-                  <th class="custom">custom</th>
-              </tr>
-              <tr>
-                  <th>
-                      <p>Embedding tag p</p>
-                  </th>
-              </tr>
-          </tbody>
-      </table>
-      `;
+    <table>
+        <tbody>
+            <tr>
+                <th class="custom">custom</th>
+            </tr>
+            <tr>
+                <th>
+                    <p>Embedding tag p</p>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    `;
 
   const result: string = md().use(mdTable, { allowedAttributes: ['class'] }).render(outdent`
     {|
@@ -138,7 +135,6 @@ it('custom allowed attribute', () => {
     |-
     !
     Embedding tag p
-    |-
     |}
     `);
 

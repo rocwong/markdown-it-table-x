@@ -24,7 +24,6 @@ yarn add markdown-it-table-x
 |class="html_attrs_in_td_tag" align="right"
 * Embedding markdown content.
 * Embedding markdown content.
-|-
 |}
 ```
 

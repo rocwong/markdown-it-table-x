@@ -159,6 +159,7 @@ export default (md: MarkdownIt, options: TableOptions) => {
         handleColumn(charCode === 0x21 /* ! */, nextLine);
         continue;
       }
+      handleEmbed(nextLine);
       // End of table
       auto_closed = true;
       break;
