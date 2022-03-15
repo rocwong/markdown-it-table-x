@@ -7,7 +7,7 @@
 ## Install
 
 ```bash
-yarn add markdown-it-table-x -D
+yarn add markdown-it-table-x
 ```
 
 ## Example
