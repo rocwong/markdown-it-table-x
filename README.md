@@ -1,8 +1,8 @@
 # markdown-it-table-x
 
-> :star: Caution :star:
-> The plugin is usable but not perfect. 
-> There may be conflicts with other markdown plugin
+[![NPM version](https://img.shields.io/npm/v/markdown-it-table-x.svg?style=flat-square&color=green)](https://www.npmjs.org/package/markdown-it-table-x)
+
+> :star: Caution: The plugin is usable but not perfect. There may be conflicts with other markdown plugin
 
 ## Install
 
