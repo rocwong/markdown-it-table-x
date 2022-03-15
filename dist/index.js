@@ -1,19 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (md, options) => {
-    const handleAttrs = (attrStr) => {
-        var _a;
-        const attrs = [];
-        (_a = attrStr.match(/\w+="[^"]*"/gi)) === null || _a === void 0 ? void 0 : _a.forEach((el) => {
-            var _a;
-            const attr = el.split('=');
-            attrs.push([attr[0], (_a = attr[1]) === null || _a === void 0 ? void 0 : _a.replace(/"/gi, '')]);
-        });
-        return attrs;
-    };
     options = options || {};
-    const markup_start = '{|', markup_end = '|}', sep_attr = options.attrSeparate || '||';
-    const tableX = (state, startLine, endLine, silent) => {
+    const markupStart = '{|', markupEnd = '|}', sepAttr = options.attrSeparate || '||', allowedAttrs = options.allowedAttributes || ['id', 'class', 'style', 'width', 'height', 'align'];
+    const table_x_plugin = (state, startLine, endLine, silent) => {
         let nextLine, params, token, charCode, auto_closed = false, start = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
         // Should have at least two lines
         if (startLine + 2 > endLine) {
@@ -21,10 +11,10 @@ exports.default = (md, options) => {
         }
         // Check out the first character quickly,
         // this should filter out most of non-containers
-        if (markup_start.charCodeAt(0) !== state.src.charCodeAt(start)) {
+        if (markupStart.charCodeAt(0) !== state.src.charCodeAt(start)) {
             return false;
         }
-        if (markup_start.charCodeAt(1) !== state.src.charCodeAt(start + 1)) {
+        if (markupStart.charCodeAt(1) !== state.src.charCodeAt(start + 1)) {
             return false;
         }
         // Table attributes
@@ -33,49 +23,67 @@ exports.default = (md, options) => {
             return true;
         }
         let tag, tableToken, trToken, tdToken, trStart = startLine, trBegin = true, embedStart = 0;
-        tableToken = new state.Token('table_x_open', 'table', 1);
-        tableToken.meta = { tr: [] };
-        tableToken.attrs = handleAttrs(params);
+        const handleAttrs = (attrStr) => {
+            var _a;
+            const attrs = [];
+            (_a = attrStr.match(/\w+="[^"]*"/gi)) === null || _a === void 0 ? void 0 : _a.forEach((el) => {
+                var _a, _b;
+                const attr = el.split('=');
+                if (allowedAttrs.length > 0) {
+                    if (allowedAttrs.includes(attr[0])) {
+                        attrs.push([attr[0], (_a = attr[1]) === null || _a === void 0 ? void 0 : _a.replace(/"/gi, '')]);
+                    }
+                }
+                else {
+                    attrs.push([attr[0], (_b = attr[1]) === null || _b === void 0 ? void 0 : _b.replace(/"/gi, '')]);
+                }
+            });
+            return attrs;
+        };
         const handleNewRow = (rowStart) => {
             if (trBegin) {
                 // Add new tr
                 trToken = new state.Token('tr_open', 'tr', 1);
-                trToken.meta = { td: [], type: 'tbody' };
+                trToken.meta = { td: [] };
                 tableToken.meta.tr.push(trToken);
                 trStart = rowStart;
                 trBegin = false;
             }
         };
-        const handleColumn = (isHerder, nextLine) => {
+        const handleColumn = (th, nextLine) => {
             handleNewRow(nextLine);
-            if (isHerder) {
-                trToken.meta.type = 'thead';
-            }
             handleEmbed(nextLine);
-            // Content of td/th
-            tag = isHerder ? 'th' : 'td';
+            tag = th ? 'th' : 'td';
             tdToken = new state.Token(`${tag}_open`, tag, 1);
             tdToken.map = [1, max];
-            // td content bounds
+            // th/td content bounds
             tdToken.meta = {
                 bounds: [state.bMarks[nextLine] + state.tShift[nextLine] + 1, state.eMarks[nextLine]],
+                markup: tag,
             };
             trToken.meta.td.push(tdToken);
         };
-        // Embedding markdown content into td
+        // Embedding markdown content into th/td
         const handleEmbed = (nextLine) => {
             handleNewRow(embedStart - 1);
             if (embedStart > 0) {
-                tdToken = new state.Token(`td_open`, 'td', 1);
-                // td content bounds
+                const th = state.src.charCodeAt(state.bMarks[embedStart - 1]) === 0x21; /* ! */
+                tag = th ? 'th' : 'td';
+                tdToken = new state.Token(`${tag}_open`, tag, 1);
+                // tdToken.map = [1, max];
+                // th/td content bounds
                 tdToken.meta = {
                     embed: true,
                     bounds: [embedStart, nextLine],
+                    markup: tag,
                 };
                 trToken.meta.td.push(tdToken);
                 embedStart = 0;
             }
         };
+        tableToken = new state.Token('table_x_open', 'table', 1);
+        tableToken.meta = { tr: [] };
+        tableToken.attrs = handleAttrs(params);
         // Search for the end of the block
         nextLine = startLine;
         for (;;) {
@@ -94,17 +102,7 @@ exports.default = (md, options) => {
                 }
                 continue;
             }
-            if (charCode === 0x21 /* ! */) {
-                handleColumn(true, nextLine);
-                continue;
-            }
-            else if (markup_end.charCodeAt(1) !== state.src.charCodeAt(start + 1) /* } */) {
-                // Check the next line
-                // If not start of '|', will embedding content into td
-                charCode = state.src.charCodeAt(state.bMarks[nextLine + 1] + state.tShift[nextLine + 1]);
-                if (charCode !== 0x7c /* | */) {
-                    continue;
-                }
+            if (charCode !== 0x7c /* | */ || markupEnd.charCodeAt(1) !== state.src.charCodeAt(start + 1) /* } */) {
                 if (state.src.charCodeAt(start + 1) === 0x2d /* - */) {
                     handleEmbed(nextLine);
                     // End of tr
@@ -112,7 +110,14 @@ exports.default = (md, options) => {
                     trBegin = true;
                     continue;
                 }
-                handleColumn(false, nextLine);
+                // Check the next line
+                // If not start of '|' or '!', will embedding content into th/td
+                charCode = state.src.charCodeAt(state.bMarks[nextLine + 1] + state.tShift[nextLine + 1]);
+                if (charCode !== 0x7c /* | */ && charCode !== 0x21 /* ! */) {
+                    continue;
+                }
+                charCode = state.src.charCodeAt(start);
+                handleColumn(charCode === 0x21 /* ! */, nextLine);
                 continue;
             }
             // End of table
@@ -123,16 +128,11 @@ exports.default = (md, options) => {
         tableToken.block = true;
         tableToken.level = state.level++;
         state.tokens.push(tableToken);
-        let r, c, text, range, tbodyBegin = true;
+        state.push(`tbody_open`, 'tbody', 1);
+        let r, c, text, range;
         for (r = 0; r < tableToken.meta.tr.length; r++) {
-            // Push in thead/tbody and tr open tokens
+            // Push in tbody and tr open tokens
             trToken = tableToken.meta.tr[r];
-            tag = trToken.meta.type;
-            if (tbodyBegin) {
-                tbodyBegin = false;
-                token = state.push(`${tag}_open`, tag, 1);
-                // token.map = trToken.map;
-            }
             trToken.block = true;
             trToken.level = state.level++;
             state.tokens.push(trToken);
@@ -142,10 +142,10 @@ exports.default = (md, options) => {
                 tdToken = trToken.meta.td[c];
                 range = [tdToken.meta.bounds[0], tdToken.meta.bounds[1]];
                 text = state.src.slice.apply(state.src, range);
-                tag = trToken.meta.type === 'thead' ? 'th' : 'td';
+                tag = tdToken.meta.markup;
                 token = state.push(`${tag}_open`, tag, 1);
                 token.map = [nextLine, nextLine + 1];
-                params = text.trim().split(sep_attr);
+                params = text.trim().split(sepAttr);
                 if (params.length > 1) {
                     text = params[1];
                     token.attrs = handleAttrs(params[0]);
@@ -170,18 +170,12 @@ exports.default = (md, options) => {
                 state.push(`${tag}_close`, tag, -1);
             }
             state.push('tr_close', 'tr', -1);
-            if (trToken.meta.type === 'thead' || r + 1 === tableToken.meta.tr.length) {
-                tag = trToken.meta.type;
-                if (!tbodyBegin) {
-                    tbodyBegin = true;
-                    state.push(`${tag}_close`, tag, -1);
-                }
-            }
         }
-        token = state.push('table_x_close', 'table', -1);
+        state.push('tbody_close', 'tbody', -1);
+        state.push('table_x_close', 'table', -1);
         state.line = nextLine + (auto_closed ? 1 : 0);
         return true;
     };
-    md.block.ruler.at('table', tableX, { alt: ['paragraph', 'reference'] });
+    md.block.ruler.at('table', table_x_plugin, { alt: ['paragraph', 'reference'] });
 };
 //# sourceMappingURL=index.js.map

@@ -17,10 +17,10 @@ yarn add markdown-it-table-x
 ! class="html_attrs_in_th_tag" align="center" || Name
 ! Description
 |-
-|class="html_attrs_in_td_tag" || *row-1-col-1*
-|*row-1-col-2*
+!class="html_attrs_in_th_tag" || *row-1-col-1*
+|*here is td tag*
 |-
-|row-2-col-1
+!here is th tag
 |class="html_attrs_in_td_tag" align="right"
 * Embedding markdown content.
 * Embedding markdown content.
@@ -32,30 +32,29 @@ rendered as
 
 ```html
 <table class="html_attrs_in_table_tag success" style="height:12rem;" align="right">
-  <thead>
-    <tr>
-      <th class="html_attrs_in_th_tag" align="center">Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td class="html_attrs_in_td_tag"><em>row-1-col-1</em></td>
-      <td><em>row-1-col-2</em></td>
-    </tr>
-    <tr>
-      <td>row-2-col-1</td>
-      <td class="html_attrs_in_td_tag" align="right">
-        <ul>
-          <li>Embedding markdown content.</li>
-          <li>Embedding markdown content.</li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
+    <tbody>
+        <tr>
+            <th class="html_attrs_in_th_tag" align="center">Name</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th class="html_attrs_in_th_tag"><em>row-1-col-1</em></th>
+            <td><em>here is td tag</em></td>
+        </tr>
+        <tr>
+            <th>here is th tag</th>
+            <td class="html_attrs_in_td_tag" align="right">
+                <ul>
+                    <li>Embedding markdown content.</li>
+                    <li>Embedding markdown content.</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
 </table>
 ```
 
 ## Params
 
-- **attrSeparate** - custom attribute separate (default: || )
+- **attrSeparate** - custom attribute separate (default: `||` )
+- **allowedAttrs** - custom alloowed attributes (default:` ['id', 'class', 'style', 'width', 'height', 'align']`, set `[]` for allow all)
