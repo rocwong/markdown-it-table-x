@@ -21,7 +21,7 @@ export default (md: MarkdownIt, options: TableOptions) => {
     markup_end = '|}',
     sep_attr = options.attrSeparate || '||';
 
-  const container: RuleBlock = (state, startLine: number, endLine: number, silent: boolean) => {
+  const tableX: RuleBlock = (state, startLine: number, endLine: number, silent: boolean) => {
     let nextLine,
       params,
       token,
@@ -45,7 +45,6 @@ export default (md: MarkdownIt, options: TableOptions) => {
 
     // Table attributes
     params = state.src.slice(start + 2, max).trim();
-    // silent 为对外配置，用于外部控制无需转换
     if (silent) {
       return true;
     }
@@ -198,9 +197,10 @@ export default (md: MarkdownIt, options: TableOptions) => {
         }
 
         if (tdToken.meta.embed) {
+          embedStart = tdToken.meta.bounds[0] - 1;
           params = state.src.substring(
-            state.bMarks[tdToken.meta.bounds[0] - 1] + state.tShift[tdToken.meta.bounds[0] - 1] + 1,
-            state.eMarks[tdToken.meta.bounds[0] - 1],
+            state.bMarks[embedStart] + state.tShift[embedStart] + 1,
+            state.eMarks[embedStart],
           );
           if (params.trim() !== '') {
             token.attrs = handleAttrs(params.trim());
@@ -233,5 +233,5 @@ export default (md: MarkdownIt, options: TableOptions) => {
     return true;
   };
 
-  md.block.ruler.at('table', container, { alt: ['paragraph', 'reference'] });
+  md.block.ruler.at('table', tableX, { alt: ['paragraph', 'reference'] });
 };

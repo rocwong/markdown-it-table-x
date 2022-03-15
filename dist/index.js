@@ -13,7 +13,7 @@ exports.default = (md, options) => {
     };
     options = options || {};
     const markup_start = '{|', markup_end = '|}', sep_attr = options.attrSeparate || '||';
-    const container = (state, startLine, endLine, silent) => {
+    const tableX = (state, startLine, endLine, silent) => {
         let nextLine, params, token, charCode, auto_closed = false, start = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
         // Should have at least two lines
         if (startLine + 2 > endLine) {
@@ -29,7 +29,6 @@ exports.default = (md, options) => {
         }
         // Table attributes
         params = state.src.slice(start + 2, max).trim();
-        // silent 为对外配置，用于外部控制无需转换
         if (silent) {
             return true;
         }
@@ -155,7 +154,8 @@ exports.default = (md, options) => {
                     text = params[0];
                 }
                 if (tdToken.meta.embed) {
-                    params = state.src.substring(state.bMarks[tdToken.meta.bounds[0] - 1] + state.tShift[tdToken.meta.bounds[0] - 1] + 1, state.eMarks[tdToken.meta.bounds[0] - 1]);
+                    embedStart = tdToken.meta.bounds[0] - 1;
+                    params = state.src.substring(state.bMarks[embedStart] + state.tShift[embedStart] + 1, state.eMarks[embedStart]);
                     if (params.trim() !== '') {
                         token.attrs = handleAttrs(params.trim());
                     }
@@ -182,6 +182,6 @@ exports.default = (md, options) => {
         state.line = nextLine + (auto_closed ? 1 : 0);
         return true;
     };
-    md.block.ruler.at('table', container, { alt: ['paragraph', 'reference'] });
+    md.block.ruler.at('table', tableX, { alt: ['paragraph', 'reference'] });
 };
 //# sourceMappingURL=index.js.map
