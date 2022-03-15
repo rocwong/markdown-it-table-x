@@ -39,6 +39,14 @@ it('should return table', () => {
                         <li>Embedding tag li 3</li>
                     </ul>
                 </th>
+                <th>
+                    <p>Embedding tag p</p>
+                    <ul>
+                        <li>Embedding tag li 1</li>
+                        <li>Embedding tag li 2</li>
+                        <li>Embedding tag li 3</li>
+                    </ul>
+                </th>
             </tr>
         </tbody>
     </table>
@@ -61,6 +69,12 @@ it('should return table', () => {
     |}
     ## h2
     {|
+    !
+    Embedding tag p
+
+    * Embedding tag li 1
+    * Embedding tag li 2
+    * Embedding tag li 3
     !
     Embedding tag p
 
@@ -119,14 +133,14 @@ it('custom allowed attribute', () => {
       `;
 
   const result: string = md().use(mdTable, { allowedAttributes: ['class'] }).render(outdent`
-      {|
-      ! class="custom" align="right" || custom
-      |-
-      !
-      Embedding tag p
-      |-
-      |}
-      `);
+    {|
+    ! class="custom" align="right" || custom
+    |-
+    !
+    Embedding tag p
+    |-
+    |}
+    `);
 
   expect(beautify.html(result)).toBe(beautify.html(expected));
 });

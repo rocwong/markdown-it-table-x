@@ -130,6 +130,7 @@ export default (md: MarkdownIt, options: TableOptions) => {
       max = state.eMarks[nextLine];
 
       charCode = state.src.charCodeAt(start);
+
       if (charCode !== 0x21 /* ! */ && charCode !== 0x7c /* | */) {
         if (embedStart === 0) {
           embedStart = nextLine;
@@ -150,6 +151,7 @@ export default (md: MarkdownIt, options: TableOptions) => {
         // If not start of '|' or '!', will embedding content into th/td
         charCode = state.src.charCodeAt(state.bMarks[nextLine + 1] + state.tShift[nextLine + 1]);
         if (charCode !== 0x7c /* | */ && charCode !== 0x21 /* ! */) {
+          handleEmbed(nextLine);
           continue;
         }
 
