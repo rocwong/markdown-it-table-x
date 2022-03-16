@@ -12,6 +12,8 @@ yarn add markdown-it-table-x
 
 ## Example
 
+> markup must start on the first character of the line
+
 ```markdown
 {| class="html_attrs_in_table_tag success" style="height:12rem;" align="right"
 ! class="html_attrs_in_th_tag" align="center" || Name
@@ -24,6 +26,7 @@ yarn add markdown-it-table-x
 |class="html_attrs_in_td_tag" align="right"
 * Embedding markdown content.
 * Embedding markdown content.
+ ![space_on_first_character]()
 |}
 ```
 
@@ -47,6 +50,7 @@ rendered as
                     <li>Embedding markdown content.</li>
                     <li>Embedding markdown content.</li>
                 </ul>
+                <p><img src="" alt="space_on_first_character"></p>
             </td>
         </tr>
     </tbody>

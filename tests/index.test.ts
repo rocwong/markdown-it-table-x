@@ -5,7 +5,7 @@ import mdTable from '../src/index';
 
 it('should return table', () => {
   const expected: string = outdent`
-    <h1>h1</h1>
+    <h1>markup must start on the first character of the line</h1>
     <table class="html_attrs_in_table_tag success" style="height:12rem;" align="right">
         <tbody>
             <tr>
@@ -23,6 +23,7 @@ it('should return table', () => {
                         <li>Embedding markdown content.</li>
                         <li>Embedding markdown content.</li>
                     </ul>
+                    <p><img src="" alt="space_on_first_character"></p>
                 </td>
             </tr>
         </tbody>
@@ -53,7 +54,7 @@ it('should return table', () => {
     `;
 
   const result: string = md().use(mdTable).render(outdent`
-    # h1
+    # markup must start on the first character of the line
     {| class="html_attrs_in_table_tag success" style="height:12rem;" align="right"
     ! class="html_attrs_in_th_tag" align="center" || Name
     ! Description
@@ -65,6 +66,7 @@ it('should return table', () => {
     |class="html_attrs_in_td_tag" align="right"
     * Embedding markdown content.
     * Embedding markdown content.
+     ![space_on_first_character]()
     |}
     ## h2
     {|

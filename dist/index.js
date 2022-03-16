@@ -93,7 +93,8 @@ exports.default = (md, options) => {
                 // Also block seems to be autoclosed by end of parent
                 break;
             }
-            start = state.bMarks[nextLine] + state.tShift[nextLine];
+            // start = state.bMarks[nextLine] + state.tShift[nextLine];
+            start = state.bMarks[nextLine];
             max = state.eMarks[nextLine];
             charCode = state.src.charCodeAt(start);
             if (charCode !== 0x21 /* ! */ && charCode !== 0x7c /* | */) {
@@ -112,7 +113,7 @@ exports.default = (md, options) => {
                 }
                 // Check the next line
                 // If not start of '|' or '!', will embedding content into th/td
-                charCode = state.src.charCodeAt(state.bMarks[nextLine + 1] + state.tShift[nextLine + 1]);
+                charCode = state.src.charCodeAt(state.bMarks[nextLine + 1]);
                 if (charCode !== 0x7c /* | */ && charCode !== 0x21 /* ! */) {
                     handleEmbed(nextLine);
                     continue;
