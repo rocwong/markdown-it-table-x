@@ -56,7 +56,7 @@ it('should return table', () => {
   const result: string = md().use(mdTable).render(outdent`
     # markup must start on the first character of the line
     {| class="html_attrs_in_table_tag success" style="height:12rem;" align="right"
-    ! class="html_attrs_in_th_tag" align="center" || Name
+    ! class="html_attrs_in_th_tag" align="center" rowspan="20" || Name
     ! Description
     |-
     !class="html_attrs_in_th_tag" || *row-1-col-1*
@@ -120,7 +120,7 @@ it('custom allowed attribute', () => {
     <table>
         <tbody>
             <tr>
-                <th class="custom">custom</th>
+                <th rowspan="2">custom</th>
             </tr>
             <tr>
                 <th>
@@ -131,9 +131,9 @@ it('custom allowed attribute', () => {
     </table>
     `;
 
-  const result: string = md().use(mdTable, { allowedAttributes: ['class'] }).render(outdent`
+  const result: string = md().use(mdTable, { allowedAttrs: ['rowspan'] }).render(outdent`
     {|
-    ! class="custom" align="right" || custom
+    ! class="custom" rowspan="2" || custom
     |-
     !
     Embedding tag p

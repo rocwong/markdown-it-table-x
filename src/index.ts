@@ -4,7 +4,7 @@ import Token from 'markdown-it/lib/token';
 
 interface TableOptions {
   attrSeparate: string;
-  allowedAttributes: string[];
+  allowedAttrs: string[];
 }
 
 export default (md: MarkdownIt, options: TableOptions) => {
@@ -12,7 +12,7 @@ export default (md: MarkdownIt, options: TableOptions) => {
   const markupStart = '{|',
     markupEnd = '|}',
     sepAttr = options.attrSeparate || '||',
-    allowedAttrs = options.allowedAttributes || ['id', 'class', 'style', 'width', 'height', 'align'];
+    allowedAttrs = options.allowedAttrs || ['id', 'class', 'style', 'width', 'height', 'align'];
 
   const table_x_plugin: RuleBlock = (state, startLine: number, endLine: number, silent: boolean) => {
     let nextLine,
@@ -53,8 +53,8 @@ export default (md: MarkdownIt, options: TableOptions) => {
     const handleAttrs = (attrStr: string): any[] => {
       const attrs: any[] = [];
       attrStr.match(/\w+="[^"]*"/gi)?.forEach((el) => {
-        const attr = el.split('=');
-        if (allowedAttrs.length > 0) {
+        const attr = el.split('=');        
+        if (allowedAttrs.length > 0) {        
           if (allowedAttrs.includes(attr[0])) {
             attrs.push([attr[0], attr[1]?.replace(/"/gi, '')]);
           }

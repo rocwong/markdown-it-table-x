@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-table-x",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "main": "dist/index.js",
   "repository": "https://github.com/rocwong/markdown-it-table-x",
   "author": "rocwong",
