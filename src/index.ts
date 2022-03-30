@@ -12,7 +12,7 @@ export default (md: MarkdownIt, options: TableOptions) => {
   const markupStart = '{|',
     markupEnd = '|}',
     sepAttr = options.attrSeparate || '||',
-    allowedAttrs = options.allowedAttrs || ['id', 'class', 'style', 'width', 'height', 'align'];
+    allowedAttrs = options.allowedAttrs || ['id', 'class', 'style', 'width', 'height', 'align', 'rowspan', 'colspan'];
 
   const table_x_plugin: RuleBlock = (state, startLine: number, endLine: number, silent: boolean) => {
     let nextLine,

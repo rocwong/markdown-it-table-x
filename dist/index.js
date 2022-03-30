@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (md, options) => {
     options = options || {};
-    const markupStart = '{|', markupEnd = '|}', sepAttr = options.attrSeparate || '||', allowedAttrs = options.allowedAttrs || ['id', 'class', 'style', 'width', 'height', 'align'];
+    const markupStart = '{|', markupEnd = '|}', sepAttr = options.attrSeparate || '||', allowedAttrs = options.allowedAttrs || ['id', 'class', 'style', 'width', 'height', 'align', 'rowspan', 'colspan'];
     const table_x_plugin = (state, startLine, endLine, silent) => {
         let nextLine, params, token, charCode, auto_closed = false, start = state.bMarks[startLine] + state.tShift[startLine], max = state.eMarks[startLine];
         // Should have at least two lines

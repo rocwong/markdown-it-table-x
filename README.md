@@ -60,4 +60,4 @@ rendered as
 ## Params
 
 - **attrSeparate** - custom attribute separate (default: `||` )
-- **allowedAttrs** - custom alloowed attributes (default:` ['id', 'class', 'style', 'width', 'height', 'align']`, set `[]` for allow all)
+- **allowedAttrs** - custom alloowed attributes (default:` ['id', 'class', 'style', 'width', 'height', 'align', 'rowspan', 'colspan']`, set `[]` for allow all)

@@ -56,7 +56,7 @@ it('should return table', () => {
   const result: string = md().use(mdTable).render(outdent`
     # markup must start on the first character of the line
     {| class="html_attrs_in_table_tag success" style="height:12rem;" align="right"
-    ! class="html_attrs_in_th_tag" align="center" rowspan="20" || Name
+    ! class="html_attrs_in_th_tag" align="center" || Name
     ! Description
     |-
     !class="html_attrs_in_th_tag" || *row-1-col-1*
